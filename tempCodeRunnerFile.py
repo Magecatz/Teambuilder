@@ -8,8 +8,6 @@ module.
 There are a number of utility commands being showcased here.'''
 bot = commands.Bot(command_prefix='?', description=description)
 
-channeldict = {}
-
 @bot.event
 async def on_ready():
 	print('Logged in as')
@@ -25,25 +23,18 @@ async def ping(message):
 
 	await message.channel.send(":ping_pong: Pong!")
 
-@bot.command()
-async def maketeams(message):
-	print(message.content)
-	team_captions = message.content.split(",")
-	for x in team_captions:
-		await message.channel.send(x)
-
 captians = []
-cap_len = 0
 @bot.event
 async def on_message(message):
-	msg = "Team Captians are"
 	if message.content.startswith('maketeams') == True:
+		msg = "Team Captians are "
 		captians.clear()
-		print(message.content)
 		team_captions = message.content.split(" ")
 		for x in team_captions:
 			if x == "maketeams":
-				print(x)
+				continue
+			elif x == " ":
+				continue
 			elif x == "69":
 				await message.channel.send("nice.")
 			elif x == "42":
@@ -53,10 +44,14 @@ async def on_message(message):
 			else:
 				captians.append(x)
 		if captians:
-			for x in captians:
-				msg += " and " + x
+			msg += captians[0]+ " and " + captians[1]
 			await message.channel.send(msg)
-			cap_len = len(captians)
+
+	if message.content.startswith('addmember') == True:
+		player = message.content.split(" ")
+		teams[message.author.mention].append(player[1])
+		await message.channel.send(player[1] + " is now on " + message.author.mention + "'s team.")
+
 	await bot.process_commands(message)
 
 
@@ -69,19 +64,23 @@ async def flipcoin(message):
 	team1.clear()
 	team2.clear()
 	flip = random.randint(0, 1)
-	print(flip)
-	print(captians)
 	await message.channel.send(captians[flip] + " Won the coin toss and will choose first")
-	if cap_len == 2:
-		print(cap_len)
 	teams[captians[0]] = team1
 	teams[captians[1]] = team2
-	print(teams)
 
 
 @bot.command()
-async def addmember(message):
-	teams[message.author.mention].append(message.content)
-	await message.channel.send(message.content + " is now on " + message.author.mention + "'s team.")
+async def printteams(message):
+	msg1 = captians[0] + "'s Team consists of "
+	msg2 = captians[1] + "'s Team consists of "
+	x = teams[captians[0]]
+	for y in x:
+		msg1 += y + ", "
+	z = teams[captians[1]]
+	for i in z:
+		msg2 += i + ", "
+	await message.channel.send(msg1)
+	await message.channel.send(msg2)
 
-bot.run('NjI1ODc0NTg5MTg4MjI3MjAx.XYmCow.gSxgnf6cXNXCGZn5SRFdqHEN83k')
+
+bot.run('NjI1ODc0NTg5MTg4MjI3MjAx.XYngSg.zgH6QQND3yaRerWvzvT1hyTXZhk')
